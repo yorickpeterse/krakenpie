@@ -46,17 +46,17 @@ class TestKraken(unittest.TestCase):
 
     def test_set_speed_with_same_value(self):
         self.kraken.current['fan'] = 80
-        self.kraken.last_update = 0
+        self.kraken.last_update['fan'] = 0
 
         with patch.object(self.device, 'set_fixed_speed') as set_fixed_speed:
             self.kraken.set_speed('fan', 80)
             set_fixed_speed.assert_not_called()
 
-        self.assertTrue(self.kraken.last_update > 0)
+        self.assertTrue(self.kraken.last_update['fan'] > 0)
 
     def test_set_speed_with_smaller_value_without_downscaling(self):
         self.kraken.current['fan'] = 90
-        self.kraken.last_update = monotonic()
+        self.kraken.last_update['fan'] = monotonic()
 
         with patch.object(self.device, 'set_fixed_speed') as set_fixed_speed:
             self.kraken.set_speed('fan', 80)
@@ -64,7 +64,7 @@ class TestKraken(unittest.TestCase):
 
     def test_set_speed_with_smaller_value_with_downscaling(self):
         self.kraken.current['fan'] = 90
-        self.kraken.last_update = -500.0
+        self.kraken.last_update['fan'] = -500.0
 
         with patch.object(self.device, 'set_fixed_speed') as set_fixed_speed:
             self.kraken.set_speed('fan', 80)
@@ -84,11 +84,14 @@ class TestKraken(unittest.TestCase):
             self.assertEqual(self.kraken.current['fan'], 80)
 
     def test_allow_downscaling(self):
-        with patch.object(self.kraken, 'last_update', monotonic()):
-            self.assertFalse(self.kraken.allow_downscaling())
+        self.kraken.last_update['fan'] = monotonic()
+        self.kraken.last_update['pump'] = monotonic() - 500
 
-        with patch.object(self.kraken, 'last_update', monotonic() - 100):
-            self.assertTrue(self.kraken.allow_downscaling())
+        self.assertFalse(self.kraken.allow_downscaling('fan'))
+        self.assertTrue(self.kraken.allow_downscaling('pump'))
+
+        self.kraken.last_update['fan'] = monotonic() - 100
+        self.assertTrue(self.kraken.allow_downscaling('fan'))
 
     def test_apply_curve(self):
         with patch.object(self.kraken, 'set_speed') as set_speed:

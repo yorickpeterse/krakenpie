@@ -95,7 +95,7 @@ class Kraken:
         self.current = {'fan': 0, 'pump': 0}
 
         # The last update to the fan/pump speeds.
-        self.last_update = monotonic()
+        self.last_update = {'fan': monotonic(), 'pump': monotonic()}
 
     # Returns a dictionary containing the status details of the Kraken.
     #
@@ -122,10 +122,10 @@ class Kraken:
         current = self.current[channel]
 
         if new_value == current:
-            self.last_update = monotonic()
+            self.last_update[channel] = monotonic()
             return
 
-        if new_value < current and not self.allow_downscaling():
+        if new_value < current and not self.allow_downscaling(channel):
             # To prevent the fans from scaling up and down due to small
             # temperature changes, we only allow scaling down after a certain
             # amount of time has elapsed since the last fan adjustments.
@@ -133,10 +133,10 @@ class Kraken:
 
         self.kraken.set_fixed_speed(channel, new_value)
         self.current[channel] = new_value
-        self.last_update = monotonic()
+        self.last_update[channel] = monotonic()
 
-    def allow_downscaling(self):
-        return monotonic() - self.last_update >= self.SCALE_DOWN_DELAY
+    def allow_downscaling(self, channel):
+        return monotonic() - self.last_update[channel] >= self.SCALE_DOWN_DELAY
 
     def apply_curve(self, current_temp: float, channel: str):
         curves = self.CURVES[channel]
