@@ -122,6 +122,7 @@ class Kraken:
         current = self.current[channel]
 
         if new_value == current:
+            self.last_update = monotonic()
             return
 
         if new_value < current and not self.allow_downscaling():

@@ -46,10 +46,13 @@ class TestKraken(unittest.TestCase):
 
     def test_set_speed_with_same_value(self):
         self.kraken.current['fan'] = 80
+        self.kraken.last_update = 0
 
         with patch.object(self.device, 'set_fixed_speed') as set_fixed_speed:
             self.kraken.set_speed('fan', 80)
             set_fixed_speed.assert_not_called()
+
+        self.assertTrue(self.kraken.last_update > 0)
 
     def test_set_speed_with_smaller_value_without_downscaling(self):
         self.kraken.current['fan'] = 90
