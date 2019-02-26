@@ -68,13 +68,13 @@ class Kraken:
 
             # A fan speed of 60% keeps the GPU core at about 65C at 100%
             # utilisation, without being too noisy.
-            range(60, 66): 60,
+            range(60, 70): 60,
 
             # These fan speeds should in most cases only be applied when the GPU
             # is getting _really_ hot.
-            range(66, 71): 65,
-            range(71, 76): 80,
-            range(75, 100): 100
+            range(70, 75): 65,
+            range(75, 80): 80,
+            range(80, 100): 100
         },
         # The Kraken liquid temperature ranges and their corresponding pump
         # speeds.
