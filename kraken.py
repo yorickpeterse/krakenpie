@@ -64,15 +64,16 @@ class Kraken:
         'fan': {
             # The default fan speed to prevent the GPU from setting itself on
             # fire.
-            range(0, 61): 50,
+            range(0, 50): 50,
+            range(50, 55): 55,
 
             # A fan speed of 60% keeps the GPU core at about 65C at 100%
             # utilisation, without being too noisy.
-            range(60, 70): 60,
+            range(55, 65): 60,
 
             # These fan speeds should in most cases only be applied when the GPU
             # is getting _really_ hot.
-            range(70, 75): 65,
+            range(60, 75): 65,
             range(75, 80): 80,
             range(80, 100): 100
         },
