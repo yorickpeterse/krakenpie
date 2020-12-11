@@ -1,8 +1,9 @@
 from liquidctl.driver.kraken_two import KrakenTwoDriver
 from time import sleep, monotonic
 from math import ceil
-from py3nvml.py3nvml import nvmlInit, nvmlDeviceGetHandleByIndex, \
+from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, \
     nvmlDeviceGetTemperature, NVML_TEMPERATURE_GPU
+from win10toast import ToastNotifier
 
 
 def round_temperature(temp: float):
@@ -57,7 +58,7 @@ class Kraken:
     CHECK_INTERVAL = 5
 
     # The delay between scaling the fans down.
-    SCALE_DOWN_DELAY = 10
+    SCALE_DOWN_DELAY = 60
 
     CURVES = {
         # The GPU core temperature ranges and their corresponding fan speeds.
@@ -65,15 +66,15 @@ class Kraken:
             # The default fan speed to prevent the GPU from setting itself on
             # fire.
             range(0, 50): 50,
-            range(50, 55): 55,
+            range(50, 55): 60,
 
-            # A fan speed of 60% keeps the GPU core at about 65C at 100%
+            # A fan speed of 70% keeps the GPU core at about 65C at 100%
             # utilisation, without being too noisy.
-            range(55, 65): 60,
+            range(55, 66): 70,
 
             # These fan speeds should in most cases only be applied when the GPU
             # is getting _really_ hot.
-            range(60, 75): 65,
+            range(65, 75): 75,
             range(75, 80): 80,
             range(80, 100): 100
         },
@@ -156,4 +157,8 @@ class Kraken:
 
 
 if __name__ == '__main__':
-    Kraken().monitor()
+    try:
+        Kraken().monitor()
+    except Exception as error:
+        notifier = ToastNotifier()
+        notifier.show_toast('Kraken', f"Kraken encountered an error: {error}")

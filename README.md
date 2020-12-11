@@ -38,7 +38,7 @@ First install Python 3, and make sure that it is added to your PATH. Once
 installed, you need to install the dependencies of krakenpie. This can be done
 by opening a terminal or cmd.exe, and running the following:
 
-    pip install liquidctl py3nvml
+    pip install -r ./requirements.txt
 
 You'll also need to make sure libusb is installed. You can do this using
 [Zadig](https://zadig.akeo.ie/), by following these steps:

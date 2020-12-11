@@ -4,8 +4,11 @@ variables:
 
 test:
   image: python:3.7
+  tags:
+    - shared-windows
+    - windows
+    - windows-1809
   before_script:
-    - mkdir -p pip
     - pip install -r requirements.txt
   script:
     - python test_kraken.py
@@ -16,7 +19,6 @@ test:
 flake8:
   image: python:3.7
   before_script:
-    - mkdir -p pip
     - pip install flake8
   script:
     - flake8 kraken.py test_kraken.py
